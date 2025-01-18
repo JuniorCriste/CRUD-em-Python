@@ -12,7 +12,14 @@ class ToDo:
         self.main_page()
 
     def main_page(self): 
-        pass
+        input_task = ft.TextField(hint_text="Digite uma tarefa")
 
-ft.app(target=ToDo)
+        input_bar = ft.Row(
+            controls=[
+                input_task,
+                ft.FloatingActionButton(icon=ft.icons.ADD, )
+            ]
+        )
+ft.app(target = ToDo)
+
         
