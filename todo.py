@@ -11,6 +11,16 @@ class ToDo:
         self.page.title = 'ToDo Axis' 
         self.main_page()
 
+    def tasks_container(self):
+        return ft.Container(
+            height=self.page.height *0.8,
+            content=ft.Column(
+                controls=[
+                    ft.Checkbox(label='Atividade 1', value =True)
+                ]
+            )
+        )    
+
     def main_page(self): 
         input_task = ft.TextField(hint_text='Digite uma tarefa', expand=True) 
 
@@ -30,7 +40,9 @@ class ToDo:
             ]
         )
 
-        self.page.add(input_bar, tabs)
+        tasks = self.tasks_container()
+
+        self.page.add(input_bar, tabs, tasks)
 
 ft.app(target = ToDo)
 
