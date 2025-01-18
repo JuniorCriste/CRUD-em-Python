@@ -8,10 +8,10 @@ class ToDo:
         self.page.window.height = 200
         self.page.window_resizable = False
         self.page.window_always_on_top
-        self.page.title = 'ToDo Axis'
+        self.page.title = 'ToDo Axis' 
         self.main_page()
 
-    def main_page(self):
+    def main_page(self): 
         pass
 
 ft.app(target=ToDo)
