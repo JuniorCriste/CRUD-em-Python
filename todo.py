@@ -10,6 +10,7 @@ class ToDo:
         self.page.window_resizable = True
         self.page.window_always_on_top = False
         self.page.title = 'ToDo Axis' 
+        self.task = ''
         self.db_execute('CREATE TABLE IF NOT EXISTS tasks(name, status)')
         self.main_page()
 
@@ -30,13 +31,26 @@ class ToDo:
             )
         )    
 
+    def set_value(self, e):
+        self.task = e.control.value
+        print(self.task)
+
+    def add(self, e, input_task):
+        name = self.task
+
+
     def main_page(self): 
-        input_task = ft.TextField(hint_text='Digite uma tarefa', expand=True) 
+        input_task = ft.TextField(
+            hint_text='Digite uma tarefa',
+            expand=True,
+            on_change=self.set_value) 
 
         input_bar = ft.Row(
             controls=[
                 input_task,
-                ft.FloatingActionButton(icon=ft.icons.ADD)
+                ft.FloatingActionButton(
+                    icon=ft.icons.ADD,
+                    on_click=lambda e: self.add(e, input_task))
             ]
         )
 
