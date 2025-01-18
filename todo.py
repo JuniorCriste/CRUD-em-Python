@@ -4,10 +4,10 @@ class ToDo:
     def __init__(self, page: ft.Page):
         self.page = page
         self.page.bgcolor = ft.colors.YELLOW
-        self.page.window.width = 200
-        self.page.window.height = 200
+        self.page.window_width = 200
+        self.page.window_height = 200
         self.page.window_resizable = False
-        self.page.window_always_on_top
+        self.page.window_always_on_top = True
         self.page.title = 'ToDo Axis' 
         self.main_page()
 
@@ -17,9 +17,12 @@ class ToDo:
         input_bar = ft.Row(
             controls=[
                 input_task,
-                ft.FloatingActionButton(icon=ft.icons.ADD, )
+                ft.FloatingActionButton(icon=ft.icons.ADD)
             ]
         )
+
+        self.page.add(input_bar)
+
 ft.app(target = ToDo)
 
         
