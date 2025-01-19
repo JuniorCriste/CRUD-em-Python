@@ -32,12 +32,12 @@ class ToDo:
         else:
             self.db_execute('UPDATE tasks SET status = "incomplete" WHERE name = ?', params=[label])    
 
-            if self.view == 'all':
-                self.results = self.db_execute('SELECT * FROM tasks')
-            else:
-                self.results = self.db_execute('SELECT * FROM tasks WHERE status = ?', params=self.view)
+        if self.view == 'all':
+            self.results = self.db_execute('SELECT * FROM tasks')
+        else:
+            self.results = self.db_execute('SELECT * FROM tasks WHERE status = ?', params=[self.view])
 
-            self.update_task_list()
+        self.update_task_list()
 
 
     def tasks_container(self):
@@ -76,7 +76,7 @@ class ToDo:
     def tabs_changed(self, e):
         if e.control.selected_index == 0:
             self.results = self.db_execute('SELECT * FROM tasks') 
-            self.view == 'all'
+            self.view = 'all'
         elif e.control.selected_index == 1:
             self.results = self.db_execute('SELECT * FROM tasks WHERE status = "incomplete"')
             self.view = 'incomplete'
