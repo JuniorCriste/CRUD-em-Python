@@ -73,6 +73,20 @@ class ToDo:
         self.page.add(tasks)        
         self.page.update()
 
+    def tabs_changed(self, e):
+        if e.control.selected_index == 0:
+            self.results = self.db_execute('SELECT * FROM tasks') 
+            self.view == 'all'
+        elif e.controls.selected_index == 1:
+            self.results = self.db_execute('SELECT * FROM tasks WHERE status = "incomplete"')
+            self.view = 'incomplete'
+        elif e.controls.selected_index == 2:
+            self.results = self.db_execute('SELECT * FROM tasks WHERE status = "complete"')
+            self.view = 'complete'
+
+        self.update_task_list()    
+
+
 
     def main_page(self): 
         input_task = ft.TextField(
@@ -91,6 +105,7 @@ class ToDo:
 
         tabs = ft.Tabs(
             selected_index=0,
+            on_change=self.tabs_changed,
             tabs=[
                 ft.Tab(text='Todas tarefas'),
                 ft.Tab(text='Em andamento'),
