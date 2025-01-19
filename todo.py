@@ -11,6 +11,7 @@ class ToDo:
         self.page.window_always_on_top = False
         self.page.title = 'ToDo Axis' 
         self.task = ''
+        self.view = 'all'
         self.db_execute('CREATE TABLE IF NOT EXISTS tasks(name, status)')
         self.results = self.db_execute('SELECT * FROM tasks')
         self.main_page()
@@ -31,9 +32,14 @@ class ToDo:
         else:
             self.db_execute('UPDATE tasks SET status = "incomplete" WHERE name = ?', params=label)    
 
+            if self.view == 'all':
+                self.results = self.db_execute('SELECT * FROM tasks')
+            else:
+                self.results = self.db_execute('SELECT * FROM tasks WHERE status = ?', params=self.view)
+
             self.update_task_list()
 
-            
+
     def tasks_container(self):
         return ft.Container(
             height=self.page.height *0.8,
