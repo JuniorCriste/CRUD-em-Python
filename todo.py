@@ -28,9 +28,9 @@ class ToDo:
         label = e.control.label
 
         if is_checked:
-            self.db_execute('UPDATE tasks SET status = "complete" WHERE name = ?', params=label)
+            self.db_execute('UPDATE tasks SET status = "complete" WHERE name = ?', params=[label])
         else:
-            self.db_execute('UPDATE tasks SET status = "incomplete" WHERE name = ?', params=label)    
+            self.db_execute('UPDATE tasks SET status = "incomplete" WHERE name = ?', params=[label])    
 
             if self.view == 'all':
                 self.results = self.db_execute('SELECT * FROM tasks')
