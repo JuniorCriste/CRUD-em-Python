@@ -33,10 +33,15 @@ class ToDo:
 
     def set_value(self, e):
         self.task = e.control.value
-        print(self.task)
+#        print(self.task)
 
     def add(self, e, input_task):
         name = self.task
+        status = 'incomplete'
+
+        if name:
+            self.db_execute(query='INSERT INTO tasks VALUES(?,?)', params=[name, status])
+            input_task.value = ''
 
 
     def main_page(self): 
