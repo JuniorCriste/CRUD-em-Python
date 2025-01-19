@@ -12,6 +12,7 @@ class ToDo:
         self.page.title = 'ToDo Axis' 
         self.task = ''
         self.db_execute('CREATE TABLE IF NOT EXISTS tasks(name, status)')
+        self.results = self.db_execute('SELECT * FROM tasks')
         self.main_page()
 
     def db_execute(self, query, params =[]):
@@ -21,12 +22,27 @@ class ToDo:
             con.commit() 
             return cur.fetchall()   
 
+    def checked(self, e):
+        is_checked = e.control.value
+        label = e.control.label
+
+        if is_checked:
+            self.db_execute('UPDATE tasks SET status = "complete" WHERE name = ?', params=label)
+        else:
+            self.db_execute('UPDATE tasks SET status = "incomplete" WHERE name = ?', params=label)    
+
+            self.update_task_list()
+
+            
     def tasks_container(self):
         return ft.Container(
             height=self.page.height *0.8,
             content=ft.Column(
                 controls=[
-                    ft.Checkbox(label='Atividade 1', value =True)
+                    ft.Checkbox(label=res[0],
+                                on_change = self.checked,
+                                value =True if res[1]== 'complete' else False)
+                    for res in self.results if res
                 ]
             )
         )    
@@ -42,6 +58,14 @@ class ToDo:
         if name:
             self.db_execute(query='INSERT INTO tasks VALUES(?,?)', params=[name, status])
             input_task.value = ''
+            self.results = self.db_execute('SELECT * FROM tasks')
+            self.update_task_list()
+
+    def update_task_list(self):
+        tasks = self.tasks_container()
+        self.page.controls.pop()
+        self.page.add(tasks)        
+        self.page.update()
 
 
     def main_page(self): 
