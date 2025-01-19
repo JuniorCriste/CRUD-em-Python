@@ -77,10 +77,10 @@ class ToDo:
         if e.control.selected_index == 0:
             self.results = self.db_execute('SELECT * FROM tasks') 
             self.view == 'all'
-        elif e.controls.selected_index == 1:
+        elif e.control.selected_index == 1:
             self.results = self.db_execute('SELECT * FROM tasks WHERE status = "incomplete"')
             self.view = 'incomplete'
-        elif e.controls.selected_index == 2:
+        elif e.control.selected_index == 2:
             self.results = self.db_execute('SELECT * FROM tasks WHERE status = "complete"')
             self.view = 'complete'
 
