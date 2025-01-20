@@ -5,16 +5,21 @@ class ToDo:
     def __init__(self, page: ft.Page):
         self.page = page
         self.page.bgcolor = ft.colors.WHITE
-        self.page.window_width = 380
+        self.page.window_width = 450
         self.page.window_height = 450
         self.page.window_resizable = True
         self.page.window_always_on_top = False
-        self.page.title = 'ToDo Axis' 
+        self.page.title = 'ToDo Axis'
+        
+        
+
         self.task = ''
         self.view = 'all'
         self.db_execute('CREATE TABLE IF NOT EXISTS tasks(name, status)')
         self.results = self.db_execute('SELECT * FROM tasks')
+        self.tabs = None
         self.main_page()
+        self.page.window_center()
 
     def db_execute(self, query, params=[]):
         with sqlite3.connect('tododb.db') as con:
@@ -32,17 +37,26 @@ class ToDo:
         else:
             self.db_execute('UPDATE tasks SET status = "incomplete" WHERE name = ?', params=[label])    
 
-        if self.view == 'all':
-            self.results = self.db_execute('SELECT * FROM tasks')
-        else:
-            self.results = self.db_execute('SELECT * FROM tasks WHERE status = ?', params=[self.view])
-
+        self.update_tabs()
         self.update_task_list()
 
     def delete_task(self, task_name):
         self.db_execute('DELETE FROM tasks WHERE name = ?', params=[task_name])
-        self.results = self.db_execute('SELECT * FROM tasks')
+        self.update_tabs()
         self.update_task_list()
+
+    def get_task_counts(self):
+        all_count = len(self.db_execute('SELECT * FROM tasks'))
+        incomplete_count = len(self.db_execute('SELECT * FROM tasks WHERE status = "incomplete"'))
+        complete_count = len(self.db_execute('SELECT * FROM tasks WHERE status = "complete"'))
+        return all_count, incomplete_count, complete_count
+
+    def update_tabs(self):
+        all_count, incomplete_count, complete_count = self.get_task_counts()
+        self.tabs.tabs[0].text = f'Todas tarefas ({all_count})'
+        self.tabs.tabs[1].text = f'Em andamento ({incomplete_count})'
+        self.tabs.tabs[2].text = f'Finalizados ({complete_count})'
+        self.page.update()
 
     def tasks_container(self):
         return ft.Container(
@@ -79,13 +93,13 @@ class ToDo:
         if name:
             self.db_execute(query='INSERT INTO tasks VALUES(?, ?)', params=[name, status])
             input_task.value = ''
-            self.results = self.db_execute('SELECT * FROM tasks')
+            self.update_tabs()
             self.update_task_list()
 
     def update_task_list(self):
+        self.results = self.db_execute('SELECT * FROM tasks') if self.view == 'all' else self.db_execute('SELECT * FROM tasks WHERE status = ?', params=[self.view])
         tasks = self.tasks_container()
-        self.page.controls.pop()
-        self.page.add(tasks)        
+        self.page.controls[-1] = tasks
         self.page.update()
 
     def tabs_changed(self, e):
@@ -116,19 +130,22 @@ class ToDo:
             ]
         )
 
-        tabs = ft.Tabs(
+        all_count, incomplete_count, complete_count = self.get_task_counts()
+
+        self.tabs = ft.Tabs(
             selected_index=0,
             on_change=self.tabs_changed,
             tabs=[
-                ft.Tab(text='Todas tarefas'),
-                ft.Tab(text='Em andamento'),
-                ft.Tab(text='Finalizados')
+                ft.Tab(text=f'Todas tarefas ({all_count})'),
+                ft.Tab(text=f'Em andamento ({incomplete_count})'),
+                ft.Tab(text=f'Finalizados ({complete_count})')
             ]
         )
 
         tasks = self.tasks_container()
 
-        self.page.add(input_bar, tabs, tasks)
+        self.page.add(input_bar, self.tabs, tasks)
+    
 
 # ft.app(target=ToDo, view=ft.WEB_BROWSER) 
 ft.app(target=ToDo)
