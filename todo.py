@@ -48,6 +48,7 @@ class ToDo:
                     ft.Checkbox(label=res[0],
                                 on_change = self.checked,
                                 value =True if res[1]== 'complete' else False)
+                                
                     for res in self.results if res
                 ]
             )
@@ -117,6 +118,7 @@ class ToDo:
 
         self.page.add(input_bar, tabs, tasks)
 
-ft.app(target = ToDo)
+# ft.app(target = ToDo, view=ft.WEB_BROWSER) 
+ft.app(target = ToDo, view=ft.WEB_BROWSER)
 
         
