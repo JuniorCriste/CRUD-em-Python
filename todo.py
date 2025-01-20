@@ -16,7 +16,7 @@ class ToDo:
         self.results = self.db_execute('SELECT * FROM tasks')
         self.main_page()
 
-    def db_execute(self, query, params =[]):
+    def db_execute(self, query, params=[]):
         with sqlite3.connect('tododb.db') as con:
             cur = con.cursor()
             cur.execute(query, params)
@@ -39,31 +39,45 @@ class ToDo:
 
         self.update_task_list()
 
+    def delete_task(self, task_name):
+        self.db_execute('DELETE FROM tasks WHERE name = ?', params=[task_name])
+        self.results = self.db_execute('SELECT * FROM tasks')
+        self.update_task_list()
 
     def tasks_container(self):
         return ft.Container(
-            height=self.page.height *0.8,
+            height=self.page.height * 0.8,
             content=ft.Column(
                 controls=[
-                    ft.Checkbox(label=res[0],
-                                on_change = self.checked,
-                                value =True if res[1]== 'complete' else False)
-                                
+                    ft.Row(
+                        controls=[
+                            ft.Checkbox(
+                                label=res[0],
+                                on_change=self.checked,
+                                value=True if res[1] == 'complete' else False
+                            ),
+                            ft.IconButton(
+                                icon=ft.icons.DELETE,
+                                on_click=lambda e, task=res[0]: self.delete_task(task),
+                                tooltip="Excluir tarefa"
+                            )
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                    )
                     for res in self.results if res
                 ]
             )
-        )    
+        )
 
     def set_value(self, e):
         self.task = e.control.value
-#        print(self.task)
 
     def add(self, e, input_task):
         name = self.task
         status = 'incomplete'
 
         if name:
-            self.db_execute(query='INSERT INTO tasks VALUES(?,?)', params=[name, status])
+            self.db_execute(query='INSERT INTO tasks VALUES(?, ?)', params=[name, status])
             input_task.value = ''
             self.results = self.db_execute('SELECT * FROM tasks')
             self.update_task_list()
@@ -86,8 +100,6 @@ class ToDo:
             self.view = 'complete'
 
         self.update_task_list()    
-
-
 
     def main_page(self): 
         input_task = ft.TextField(
@@ -118,7 +130,5 @@ class ToDo:
 
         self.page.add(input_bar, tabs, tasks)
 
-# ft.app(target = ToDo, view=ft.WEB_BROWSER) 
-ft.app(target = ToDo)
-
-        
+# ft.app(target=ToDo, view=ft.WEB_BROWSER) 
+ft.app(target=ToDo)
