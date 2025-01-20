@@ -119,6 +119,6 @@ class ToDo:
         self.page.add(input_bar, tabs, tasks)
 
 # ft.app(target = ToDo, view=ft.WEB_BROWSER) 
-ft.app(target = ToDo, view=ft.WEB_BROWSER)
+ft.app(target = ToDo)
 
         
